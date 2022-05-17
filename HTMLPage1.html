@@ -1,0 +1,232 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <style>
+        .but {
+            width: 50px;
+            height: 50px;
+            margin: 2px;
+            border-radius:5px;
+            border-color:gray;
+            border-width:1px;
+            
+        }
+        :hover.but{
+            background-color:azure
+        }
+        .flexcent{
+            justify-content:center;
+            display:flex;
+        }
+        .bodystyle {
+            background-color: cadetblue;
+            height: 350px;
+            width: 300px;
+            border: solid;
+            border-radius:2px;
+            border-width:thin;
+                
+        }
+        .topdiv {
+            margin-bottom: 15px;
+            margin-top: 15px;
+            height: 30px
+        }
+        .inputcalc {
+            margin-right: 2px;
+            border-radius:5px;
+            border-width:1px;
+            border-style:outset;
+            
+        }
+        .charbut{
+            background-color:burlywood;
+            border-radius:5px;
+            border-width:1px;
+            border-color:gray;
+            
+            
+        }
+        :hover.charbut{
+            background-color:azure;
+        }
+        
+    </style>
+    <title>Calculator</title>
+</head>
+<body id="Calcbody">
+    <div class="bodystyle">
+        <div class="flexcent topdiv">
+            <input id="Inputcalc" class="inputcalc" type="text" name="name" value=""placeholder="Введите выражение.." />
+            <button id="Cancelbut" style="width:25px" class="charbut">C</button>
+        </div>
+            <div class="flexcent">
+                <button id="Onebut" class="but">1</button>
+                <button id="Twobut" class="but">2</button>
+                <button id="Threebut" class="but">3</button>
+                <button id="Minbut" class="but charbut">-</button>
+
+            </div>
+            <div class="flexcent">
+                <button id="Fourbut" class="but">4</button>
+                <button id="Fivebut" class="but">5</button>
+                <button id="Sixbut" class="but">6</button>
+                <button id="Plusbut" class="but charbut">+</button>
+
+            </div>
+            <div class="flexcent">
+                <button id="Sevbut" class="but">7</button>
+                <button id="Eighbut" class="but">8</button>
+                <button id="Ninebut" class="but">9</button>
+                <button id="Multbut" class="but charbut">*</button>
+
+            </div>
+            <div class="flexcent">
+                <button id="Dotbut" class="but charbut">.</button>
+                <button id="Zerobut" class="but">0</button>
+                <button id="Delbut" style="color:red" class="but charbut">x</button>
+                <button id="Devbut" class="but charbut">/</button>
+
+            </div>
+            <div class="flexcent">
+                <button id="Braclbut" class="but charbut">(</button>
+                <button id="Bracrbut" class="but charbut">)</button>
+                <button id="Percbut" class="but charbut">%</button>
+                <button id="Countbut" class="but charbut">=</button>
+
+            </div>
+
+
+    </div>
+    <script>
+        const Cancelbut = document.getElementById("Cancelbut");
+        const Inputcalc = document.getElementById("Inputcalc");
+        const Delbut = document.getElementById("Delbut");
+        const Countbut = document.getElementById("Countbut");
+        const Braclbut = document.getElementById("Braclbut");
+        const Bracrbut = document.getElementById("Bracrbut");
+        const characters = new String("-,+,*,/,.,%");
+
+        Cancelbut.addEventListener("click", Cancel);
+        Delbut.addEventListener("click", Delete);
+        Countbut.addEventListener("click", Calculated);
+       
+
+        var buttons = document.querySelectorAll(".but");
+        for (let i = 0; i < buttons.length; i++) {
+            if (buttons[i].textContent != "x" && buttons[i].textContent != "=" && buttons[i].id != "Braclbut" && buttons[i].id != "Bracrbut")
+            buttons[i].addEventListener("click", CharClick);
+        }
+
+        Braclbut.addEventListener("click", function (e) {
+            e.preventDefault();
+            alert("Sorry, this button not working yet");
+        });
+        Bracrbut.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            alert("Sorry, this button not working yet");
+        });
+
+        function Calculated() {
+            const expression = new String(Inputcalc.value);
+            const buff = expression.match(/\d{1,}\.*\d*\D*/g);
+            for (var i = 0; i < buff.length; i++) {
+                if (buff[i].endsWith("/") || buff[i].endsWith("*") || buff[i].endsWith("%")) {
+                    var num1 = buff[i].match(/\d{1,}\.*\d*/g);
+                    var op = buff[i].charAt(buff[i].length-1);
+                    var num2 = buff[i + 1].match(/\d{1,}\.*\d*/);
+                    var op2 = buff[i + 1].charAt(buff[i+1].length - 1);
+                    var result = Operation(op, num1[0], num2[0]);
+                    buff[i] = result + op2;
+                    buff.splice(i + 1, 1);
+                    i--;
+                    
+                }
+                if (i + 1 >= buff.length) {
+
+                    for (var k = 0; k < buff.length; k++) {
+
+                        if (k + 1 >= buff.length) {
+                            Inputcalc.value = result;
+                            break;
+
+                        }
+
+                        var num1 = buff[k].match(/\d{1,}\.*\d*/);
+                        var op = buff[k].charAt(buff[k].length - 1);
+                        var num2 = buff[k + 1].match(/\d{1,}\.*\d*/);
+                        var op2 = buff[k + 1].charAt(buff[k+1].length - 1);
+                        var result = Operation(op, num1[0], num2[0]);
+                        buff[k] = result + op2;
+                        buff.splice(k + 1, 1);
+                        k--;
+                    }
+                }
+                
+            }
+        }
+
+        function Operation(op, num1, num2) {
+
+            var res;
+            switch (op) {
+                case "+":
+                    res = Number(num1) + Number(num2);
+                    break;
+                case "-":
+                    res = Number(num1) - Number(num2);
+                    break;
+                case "*":
+                    
+                    res = Number(num1) * Number(num2);
+                    break;
+                case "/":
+                    res = Number(num1) / Number(num2);
+                    break;
+                case "%":
+                    res = Number(num1)%Number(num2);
+                    break;
+                default:
+                    alert("error");
+            }
+            return res;
+        }
+        function Delete() {
+            var delstring = new String(Inputcalc.value);
+            var resstring = delstring.substring(0, delstring.length - 1);
+            Inputcalc.value = resstring;
+        }
+
+        function Cancel() {
+            Inputcalc.value = "";
+        }
+
+        function CharClick(e) {
+            const curbut = e.currentTarget;
+            var tempstring = new String(Inputcalc.value);
+            var tempchar = new String(curbut.textContent);
+            var lastindex = tempstring.length-1;
+
+            if (characters.includes(tempstring.charAt(lastindex))) {
+
+                if (characters.includes(tempchar)) {
+
+                }
+                else {
+                    Inputcalc.value += curbut.textContent;
+                }
+
+            }
+            else {
+                Inputcalc.value += curbut.textContent;
+
+            }
+        }
+
+    </script>
+</body>
+
+</html>
